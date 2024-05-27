@@ -1,5 +1,4 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import path from 'path';
@@ -18,28 +17,9 @@ const __dirname = path.dirname(__filename);
 app.use(cors());
 app.use(express.json());
 
-const uri = process.env.MONGO_URI;
-mongoose.connect(uri);
-const connection = mongoose.connection;
-connection.once('open', () => {
-  console.log('MongoDB database connection established successfully');
-});
-
-const videoSchema = new mongoose.Schema({
-  id: String,
-  video: String,
-  caption: String,
-});
-
-const Video = mongoose.model('Video', videoSchema);
-
-app.get('/videos', async (req, res) => {
-  try {
-    const videos = await Video.find();
-    res.json(videos);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+// JSONファイルを提供するルートを追加
+app.get('/videos.json', (req, res) => {
+  res.sendFile(path.join(__dirname, 'videos.json'));
 });
 
 // ビルド済みの静的ファイルを提供する設定を追加

@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import VideoPost from './components/video.js';
 import './App.css';
-import axios from 'axios';
 
 const App = () => {
   const [activePostId, setActivePostId] = useState(null);
@@ -11,12 +10,15 @@ const App = () => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const apiUrl = process.env.REACT_APP_API_URL;
-        const response = await axios.get(`${apiUrl}/videos`);
-        console.log('Fetched videos:', response.data);
-        setPosts(response.data);
-        if (response.data.length > 0) {
-          setActivePostId(response.data[0]._id);
+        const response = await fetch('http://192.168.0.165:5000/videos.json'); // フルURLを使用
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        console.log('Fetched videos:', data);
+        setPosts(data);
+        if (data.length > 0) {
+          setActivePostId(data[0].id);
         }
       } catch (err) {
         console.error('Error fetching videos:', err);
@@ -67,7 +69,7 @@ const App = () => {
   return (
     <div className="feed-screen" ref={containerRef}>
       {posts.map((post) => (
-        <div key={post._id} data-id={post._id} className="video-post-wrapper">
+        <div key={post.id} data-id={post.id} className="video-post-wrapper">
           <VideoPost post={post} activePostId={activePostId} />
         </div>
       ))}
