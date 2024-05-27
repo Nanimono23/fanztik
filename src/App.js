@@ -10,7 +10,7 @@ const App = () => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const response = await fetch('http://192.168.0.165:5000/videos.json'); // フルURLを使用
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/videos`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
